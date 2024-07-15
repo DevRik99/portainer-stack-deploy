@@ -53,7 +53,8 @@ async fn main() -> Result<(), reqwest::Error> {
     //stack content, content of docker-compose.yml
     let mut compose = get_env_string("INPUT_DOCKER_COMPOSE", None);
     let compose_path = get_env_string("INPUT_DOCKER_COMPOSE_PATH", None);
-    let stack_name = env::var("INPUT_STACKNAME").unwrap();
+    //let stack_name = env::var("INPUT_STACKNAME").unwrap();
+    let stack_name = get_env_string("INPUT_STACKNAME", None);
     let api_key = get_env_string("INPUT_ACCESS_TOKEN", None);
     let username = get_env_string("INPUT_USERNAME", None);
     let password = get_env_string("INPUT_PASSWORD", None);
@@ -288,7 +289,14 @@ async fn main() -> Result<(), reqwest::Error> {
     };
     match create_result["message"].as_str() {
         Some(msg) => {
-            println!("create stack failed: {} {}", msg, create_result["details"]);
+            println!(
+                "create stack failed: {} {}\nStackFileContent: {}\nEnv: {:?}\nName: {}",
+                msg,
+                create_result["details"],
+                c,
+                envs,
+                stack_name
+            );
             panic!("create stack failed");
         }
         None => println!("create stack success"),
